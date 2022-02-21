@@ -2,9 +2,12 @@ import { connect, IClientPublishOptions, MqttClient } from "mqtt";
 
 type Callback = (payload: Buffer) => void;
 
-interface ISub {
+export interface ISubsciption {
   topic: string;
   callback: Callback;
+}
+
+interface ISubInternal extends ISubsciption {
   match: boolean;
 }
 
@@ -18,7 +21,7 @@ export class MQTTManager {
   public readonly address: string;
   public readonly topic: string;
   public readonly client: MqttClient;
-  public readonly subscriptions: ISub[] = [];
+  public readonly subscriptions: ISubInternal[] = [];
 
   protected readonly logger: ILogger | undefined;
 
@@ -83,7 +86,18 @@ export class MQTTManager {
     });
   }
 
-  public subscribe(topic: string, callback: Callback): void {
+  public subscribe(subscription: ISubsciption): void;
+  public subscribe(subscriptions: ISubsciption[]): void;
+  public subscribe(topic: string, callback: Callback): void
+  public subscribe(parameter: string | ISubsciption | ISubsciption[], cb?: Callback): void {
+    if (Array.isArray(parameter)) {
+      parameter.forEach(s => this.subscribe(s));
+      return;
+    }
+
+    const topic = typeof parameter === "string" ? parameter : parameter.topic;
+    const callback = typeof parameter === "string" ? cb! : parameter.callback;
+
     // Throw if topic already exists
     if (this.subscriptions.find(s => s.topic === topic)) {
       throw new Error(`Invalid subscription, duplicate topic: ${topic}`);
