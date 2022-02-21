@@ -88,7 +88,7 @@ export class MQTTManager {
 
   public subscribe(subscription: ISubsciption): void;
   public subscribe(subscriptions: ISubsciption[]): void;
-  public subscribe(topic: string, callback: Callback): void
+  public subscribe(topic: string, callback: Callback): void;
   public subscribe(parameter: string | ISubsciption | ISubsciption[], cb?: Callback): void {
     if (Array.isArray(parameter)) {
       parameter.forEach(s => this.subscribe(s));
