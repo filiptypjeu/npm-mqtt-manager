@@ -44,5 +44,10 @@
     "files": [
         "dist"
     ],
-    "keywords": []
+    "keywords": [
+        "mqtt",
+        "client",
+        "wrapper",
+        "dlux"
+    ]
 }
