@@ -68,7 +68,7 @@ export class MQTTManager {
     return this.topic + "/status";
   }
 
-  public publish(topic: string, message: string | Buffer, options?: IClientPublishOptions) {
+  public publish(topic: string, message: string | Buffer, options?: IClientPublishOptions): void {
     this.client.publish(topic, message, options || {}, e => {
       if (e) {
         this.logger?.error(`Could not publish to ${topic} - ${e}`);
@@ -83,7 +83,7 @@ export class MQTTManager {
     });
   }
 
-  public subscribe(topic: string, callback: Callback) {
+  public subscribe(topic: string, callback: Callback): void {
     // Throw if topic already exists
     if (this.subscriptions.find(s => s.topic === topic)) {
       throw new Error(`Invalid subscription, duplicate topic: ${topic}`);
