@@ -20,6 +20,7 @@ module.exports = {
     "rules": {
         "@typescript-eslint/no-inferrable-types": "off",
         "@typescript-eslint/no-unsafe-return": "off",
-        "@typescript-eslint/restrict-template-expressions": "off"
+        "@typescript-eslint/restrict-template-expressions": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
     }
 };
