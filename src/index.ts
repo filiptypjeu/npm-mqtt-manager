@@ -86,18 +86,15 @@ export class MQTTManager {
     });
   }
 
-  public subscribe(subscription: ISubsciption): void;
-  public subscribe(subscriptions: ISubsciption[]): void;
-  public subscribe(topic: string, callback: Callback): void;
-  public subscribe(parameter: string | ISubsciption | ISubsciption[], cb?: Callback): void {
-    if (Array.isArray(parameter)) {
-      parameter.forEach(s => this.subscribe(s));
-      return;
-    }
+  public subscibe(topic: string, callback: Callback): void {
+    this.addSubscription(topic, callback);
+  }
 
-    const topic = typeof parameter === "string" ? parameter : parameter.topic;
-    const callback = typeof parameter === "string" ? cb! : parameter.callback;
+  public subscribe(subscriptions: ISubsciption | ISubsciption[]): void {
+    (Array.isArray(subscriptions) ? subscriptions : [subscriptions]).forEach(s => this.addSubscription(s.topic, s.callback));
+  }
 
+  public addSubscription(topic: string, callback: Callback): void {
     // Throw if topic already exists
     if (this.subscriptions.find(s => s.topic === topic)) {
       throw new Error(`Invalid subscription, duplicate topic: ${topic}`);
