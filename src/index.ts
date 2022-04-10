@@ -25,7 +25,7 @@ export class MQTTManager {
 
   protected readonly logger: ILogger | undefined;
 
-  constructor(o: { name: string; root?: string; host: string; port: number; logger?: ILogger }) {
+  constructor(o: { name: string; root?: string; host: string; port: number; logger?: ILogger; logErrors?: boolean }) {
     this.name = o.name;
     this.address = `mqtt://${o.host}:${o.port}`;
     this.topic = o.root ? `${o.root}/${o.name}` : o.name;
@@ -44,7 +44,7 @@ export class MQTTManager {
       },
     }).setMaxListeners(99);
 
-    this.client.on("error", e => this.logger?.error(e));
+    if (o.logErrors) this.client.on("error", e => this.logger?.error(e));
 
     this.client.on("connect", () => {
       this.logger?.info(`Connected to MQTT broker at ${this.address} as ${this.name}`);
