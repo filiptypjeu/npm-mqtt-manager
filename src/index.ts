@@ -44,7 +44,7 @@ export class MQTTManager {
       },
     }).setMaxListeners(99);
 
-    if (o.logErrors) this.client.on("error", e => this.logger?.error(e));
+    if (o.logErrors !== false)this.client.on("error", e => this.logger?.error(e));
 
     this.client.on("connect", () => {
       this.logger?.info(`Connected to MQTT broker at ${this.address} as ${this.name}`);
