@@ -1,4 +1,4 @@
-import { MQTTManager } from "../index";
+import MQTTManager from "../index";
 
 test("valid_subscriptions", () => {
   expect(MQTTManager.checkTopic("test/abc")).toEqual(true);

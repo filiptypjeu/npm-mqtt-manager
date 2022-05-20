@@ -1,4 +1,4 @@
-import { MQTTManager } from "../index";
+import MQTTManager from "../index";
 
 test("match_topic", () => {
   const filter = "test/more";
