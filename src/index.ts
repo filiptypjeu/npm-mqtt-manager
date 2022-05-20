@@ -152,3 +152,5 @@ export class MQTTManager {
     return length === topicArray.length;
   }
 }
+
+export default MQTTManager;
