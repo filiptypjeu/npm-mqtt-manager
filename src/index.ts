@@ -1,6 +1,6 @@
 import { connect, IClientPublishOptions, MqttClient } from "mqtt";
 
-type Callback = (payload: Buffer) => void;
+type Callback = (payload: Buffer, topic: string) => void;
 
 export interface ISubscription {
   topic: string;
@@ -61,7 +61,7 @@ export class MQTTManager {
         const sub = this.subscriptions[i];
         const match = sub.match ? MQTTManager.matchTopic(sub.topic, topic) : sub.topic === topic;
         if (match) {
-          sub.callback(payload);
+          sub.callback(payload, topic);
         }
       }
     });
