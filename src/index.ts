@@ -2,12 +2,12 @@ import { connect, IClientPublishOptions, MqttClient } from "mqtt";
 
 type Callback = (payload: Buffer) => void;
 
-export interface ISubsciption {
+export interface ISubscription {
   topic: string;
   callback: Callback;
 }
 
-interface ISubInternal extends ISubsciption {
+interface ISubInternal extends ISubscription {
   match: boolean;
 }
 
@@ -90,7 +90,7 @@ export class MQTTManager {
     this.addSubscription(topic, callback);
   }
 
-  public subscribe(subscriptions: ISubsciption | ISubsciption[]): void {
+  public subscribe(subscriptions: ISubscription | ISubscription[]): void {
     (Array.isArray(subscriptions) ? subscriptions : [subscriptions]).forEach(s => this.addSubscription(s.topic, s.callback));
   }
 
