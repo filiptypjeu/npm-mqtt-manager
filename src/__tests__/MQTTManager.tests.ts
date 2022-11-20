@@ -4,29 +4,37 @@ import vars from "./VARS";
 if (vars.host) {
   const mqtt = new MQTTManager({ ...vars, logger: console });
 
-  let v = 0, w = 0;
+  let v = 0,
+    w = 0;
 
   test("subscribe invalid topic", () => {
-    expect(() => mqtt.subscribe(mqtt.topic + "//test", () => { })).toThrow();
+    expect(() => mqtt.subscribe(mqtt.topic + "//test", () => {})).toThrow();
   });
 
-  const callback1 = (payload: Buffer) => { v = Number(payload); }
-  const callback2 = (payload: Buffer) => { w = Number(payload) + 1; }
-  const callback3 = () => {}
+  const callback1 = (payload: Buffer) => {
+    v = Number(payload);
+  };
+  const callback2 = (payload: Buffer) => {
+    w = Number(payload) + 1;
+  };
+  const callback3 = () => {};
 
   test("subscribe", async () => {
     mqtt.subscribe(mqtt.topic + "/test1", callback1);
     mqtt.subscribe(mqtt.topic + "/test1", callback2);
     mqtt.subscribe(mqtt.topic + "/test2", callback3);
-    expect(mqtt.subscriptions).toEqual([{
-      topic: mqtt.topic + "/test1",
-      callbacks: [callback1, callback2],
-      match: false,
-    }, {
-      topic: mqtt.topic + "/test2",
-      callbacks: [callback3],
-      match: false,
-    }]);
+    expect(mqtt.subscriptions).toEqual([
+      {
+        topic: mqtt.topic + "/test1",
+        callbacks: [callback1, callback2],
+        match: false,
+      },
+      {
+        topic: mqtt.topic + "/test2",
+        callbacks: [callback3],
+        match: false,
+      },
+    ]);
     await new Promise(r => setTimeout(r, 500));
 
     expect(v).toEqual(0);
