@@ -3,5 +3,5 @@
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
   "testPathIgnorePatterns": ["/__tests__/variables/*"],
-  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$"
+  "testRegex": "/__tests__/.*tests\\.ts$"
 }

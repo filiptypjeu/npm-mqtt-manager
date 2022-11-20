@@ -13,8 +13,8 @@
         "prepare": "npm run build",
         "prepublishOnly": "npm test && npm run lint",
         "preversion": "npm run format && npm run lint",
-        "test": "jest --config jestconfig.json",
-        "test-coverage": "jest --config jestconfig.json --coverage",
+        "test": "jest --config jestconfig.json --runInBand --detectOpenHandles",
+        "test-coverage": "npm test -- --coverage",
         "version": "npm run format && git add -A src"
     },
     "repository": {
