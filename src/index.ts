@@ -87,12 +87,18 @@ export class MQTTManager {
     });
   }
 
+  /**
+   * @deprecated Because of typo in method name...
+   */
   public subscibe(topic: string, callback: Callback): void {
     this.addSubscription(topic, callback);
   }
 
-  public subscribe(subscriptions: ISubscription | ISubscription[]): void {
-    (Array.isArray(subscriptions) ? subscriptions : [subscriptions]).forEach(s => this.addSubscription(s.topic, s.callback));
+  public subscribe(topic: string, callback: Callback): void;
+  public subscribe(subscriptions: ISubscription | ISubscription[]): void;
+  public subscribe(param: ISubscription | ISubscription[] | string, callback?: Callback): void {
+    if (typeof param !== "string") (Array.isArray(param) ? param : [param]).forEach(s => this.addSubscription(s.topic, s.callback));
+    else if (callback) this.addSubscription(param, callback);
   }
 
   public addSubscription(topic: string, callback: Callback): void {
