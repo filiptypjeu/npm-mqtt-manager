@@ -129,6 +129,40 @@ export class MQTTManager {
     });
   }
 
+  public unsubscribe(topic: string, callback?: Callback): void;
+  public unsubscribe(subscriptions: ISubscription | ISubscription[]): void;
+  public unsubscribe(param: ISubscription | ISubscription[] | string, callback?: Callback): void {
+    if (typeof param !== "string") (Array.isArray(param) ? param : [param]).forEach(s => this.removeSubscription(s.topic, s.callback));
+    else this.removeSubscription(param, callback);
+  }
+
+  public removeSubscription(topic: string, callback?: Callback): void {
+    const sub = this.subscriptions.find(s => s.topic === topic);
+    if (!sub) {
+      this.logger?.error(`Could not unsubscribe from ${topic} - not subscribed`);
+      return;
+    }
+
+    if (sub.callbacks.length > 1) {
+      if (!sub.callbacks.find(c => c === callback)) {
+        this.logger?.error(`Could not unsubscribe from ${topic} - could not find matching callback`);
+        return;
+      }
+      sub.callbacks = sub.callbacks.filter(c => c !== callback);
+      this.logger?.info(`Removed callback (${sub.callbacks.length}) from topic ${topic}`);
+      return;
+    }
+
+    this.subscriptions.splice(this.subscriptions.indexOf(sub), 1);
+    this.client.unsubscribe(topic, {}, e => {
+      if (e) {
+        this.logger?.error(`Could not unsubscribe from ${topic} - ${e}`);
+      } else {
+        this.logger?.info(`Unsubscribed from topic ${topic}`);
+      }
+    });
+  }
+
   public static checkTopic = (topic: string): boolean => {
     if (topic === "" || topic === "+") return false;
 
