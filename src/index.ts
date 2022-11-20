@@ -7,7 +7,9 @@ export interface ISubscription {
   callback: Callback;
 }
 
-interface ISubInternal extends ISubscription {
+interface ISubInternal {
+  topic: string;
+  callbacks: Callback[];
   match: boolean;
 }
 
@@ -57,11 +59,10 @@ export class MQTTManager {
       // XXX: How to know if Buffer is printable as a string?
       this.logger?.info(`Recieved message: ${topic} | "${payload.toString()}"`);
 
-      for (let i = 0; i < this.subscriptions.length; i++) {
-        const sub = this.subscriptions[i];
+      for (const sub of this.subscriptions) {
         const match = sub.match ? MQTTManager.matchTopic(sub.topic, topic) : sub.topic === topic;
         if (match) {
-          sub.callback(payload, topic);
+          sub.callbacks.forEach(c => c(payload, topic));
         }
       }
     });
@@ -95,19 +96,21 @@ export class MQTTManager {
   }
 
   public addSubscription(topic: string, callback: Callback): void {
-    // Throw if topic already exists
-    if (this.subscriptions.find(s => s.topic === topic)) {
-      throw new Error(`Invalid subscription, duplicate topic: ${topic}`);
-    }
-
     // Throw if topic is invalid
     if (!MQTTManager.checkTopic(topic)) {
       throw new Error(`Invalid subscription, invalid topic: ${topic}`);
     }
 
+    const sub = this.subscriptions.find(s => s.topic === topic);
+    if (sub) {
+      sub.callbacks.push(callback);
+      this.logger?.info(`Added callback (${sub.callbacks.length}) to topic ${topic}`);
+      return;
+    }
+
     this.subscriptions.push({
       topic,
-      callback,
+      callbacks: [callback],
       match: topic.includes("#") || topic.includes("+"),
     });
 
